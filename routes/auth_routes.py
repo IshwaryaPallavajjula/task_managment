@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from models.user import users_collection
 from utils.password_utils import hash_password, check_password
 from utils.jwt_utils import generate_token
+from utils.auth_middleware import auth_required
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -62,4 +63,10 @@ def login():
     return jsonify({
         "message": "Login successful",
         "token": token
+    }), 200
+@auth_bp.route("/me", methods=["GET"])
+@auth_required
+def me():
+    return jsonify({
+        "user_id": request.user["user_id"]
     }), 200
