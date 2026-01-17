@@ -4,6 +4,7 @@ from routes.auth_routes import auth_bp
 from routes.task_routes import task_bp
 
 app = Flask(__name__)
+CORS(app)
 
 # 🔥 ENABLE CORS (THIS IS THE FIX)
 CORS(app, resources={r"/*": {"origins": "*"}})
