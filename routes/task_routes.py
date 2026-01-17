@@ -1,17 +1,21 @@
 from flask import Blueprint, request, jsonify
 from models.task import tasks_collection
 from utils.auth_middleware import auth_required
-from bson import ObjectId 
+from bson import ObjectId
+
 task_bp = Blueprint("tasks", __name__, url_prefix="/tasks")
 
-@task_bp.route("/", methods=["GET"])
+@task_bp.route("", methods=["GET"])
 @auth_required
 def get_tasks():
     user_id = request.user["user_id"]
-
-    tasks = list(tasks_collection.find({"userId": user_id}, {"_id": 0}))
+    tasks = list(tasks_collection.find(
+        {"userId": user_id},
+        {"_id": 0}
+    ))
     return jsonify(tasks), 200
-@task_bp.route("/", methods=["POST"])
+
+@task_bp.route("", methods=["POST"])
 @auth_required
 def create_task():
     data = request.get_json()
@@ -32,9 +36,7 @@ def create_task():
     }
 
     tasks_collection.insert_one(task)
-
     return jsonify({"message": "Task created successfully"}), 201
-
 
 @task_bp.route("/<task_id>", methods=["PUT"])
 @auth_required
@@ -61,6 +63,7 @@ def update_task(task_id):
         return jsonify({"error": "Task not found or unauthorized"}), 404
 
     return jsonify({"message": "Task updated successfully"}), 200
+
 @task_bp.route("/<task_id>", methods=["DELETE"])
 @auth_required
 def delete_task(task_id):
